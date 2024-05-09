@@ -17,9 +17,9 @@ namespace ManeroProductsFunction.Functions
         public async Task <IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
-            var product = JsonConvert.DeserializeObject<ProductsEntity>(body);
+            var product = JsonConvert.DeserializeObject<CategoryEntity>(body);
 
-            _context.Products.Add(product);
+            _context.Category.Add(product);
             await _context.SaveChangesAsync();
 
             return new OkObjectResult(product);
