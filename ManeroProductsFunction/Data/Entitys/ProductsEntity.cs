@@ -13,6 +13,7 @@
         public string? PublishDate { get; set; }
         public string? Publisher { get; set; }
         public string? ISBN { get; set; }
+        public string PartitionKey { get; set; } = "Products";
         public List<FormatEntity> Formats { get; set; } = null!;
         public CategoryEntity? Category { get; set; }
         public SubCategoryEntity? SubCategory { get; set; }
