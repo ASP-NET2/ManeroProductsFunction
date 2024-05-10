@@ -12,7 +12,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     {
         modelBuilder.Entity<CategoryEntity>()
             .ToContainer("Category")
-            .HasPartitionKey(x => x.PartitionKey);
+            .HasPartitionKey(x => x.Category);
 
     }
 }
