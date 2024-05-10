@@ -11,3 +11,4 @@ public class CategoryEntity
     public string PartitionKey { get; set; } = "Category";
     public string Category { get; set; } = "Category";
 }
+    
