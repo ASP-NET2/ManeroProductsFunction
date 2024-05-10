@@ -17,7 +17,7 @@ namespace ManeroProductsFunction.Functions
         public ImageUploader(IConfiguration configuration)
         {
             _configuration = configuration;
-            _client = new BlobServiceClient(_configuration.GetConnectionString("DefaultEndpointsProtocol=https;AccountName=productsblob;AccountKey=oZ6fd6P0fVvyt38Iyz9Jo6UzIefg5m0Q7U52567g2oQCcfWcCYtCAeeX2kLvwyiik2KIRJtU0HzQ+AStmYzPSQ==;EndpointSuffix=core.windows.net"));
+            _client = new BlobServiceClient("DefaultEndpointsProtocol=https;AccountName=productsblob;AccountKey=oZ6fd6P0fVvyt38Iyz9Jo6UzIefg5m0Q7U52567g2oQCcfWcCYtCAeeX2kLvwyiik2KIRJtU0HzQ+AStmYzPSQ==;EndpointSuffix=core.windows.net");
             _container = _client.GetBlobContainerClient("images");
         }
 
