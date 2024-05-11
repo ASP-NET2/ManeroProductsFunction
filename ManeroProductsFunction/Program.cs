@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using ManeroProductsFunction.Data.Context;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,14 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.AddDbContext<DataContext>(x => x.UseCosmos(Environment.GetEnvironmentVariable("CosmosDB")!, Environment.GetEnvironmentVariable("ManeroProducts")!));
+        services.AddSingleton(x =>
+        {
+            var blobServiceClient = x.GetRequiredService<BlobServiceClient>();
+            return blobServiceClient.GetBlobContainerClient("images");
+        });
+
     })
+
     .Build();
 
 host.Run();
