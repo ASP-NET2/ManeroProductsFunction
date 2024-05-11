@@ -7,6 +7,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 {
     public DbSet<ProductsEntity> Product { get; set; }
     public DbSet<CategoryEntity> Category { get; set; }
+    public DbSet<SubCategoryEntity> SubCategory { get; set; }
     
 
 
@@ -20,7 +21,11 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             .ToContainer("Category")
             .HasPartitionKey(x => x.Category);
 
-        
+        modelBuilder.Entity<SubCategoryEntity>()
+            .ToContainer("SubCategorys")
+            .HasPartitionKey(x => x.SubCategory);
+
+
 
     }
 }
