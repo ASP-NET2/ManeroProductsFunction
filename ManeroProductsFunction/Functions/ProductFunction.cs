@@ -24,5 +24,22 @@ namespace ManeroProductsFunction.Functions
 
             return new OkObjectResult(product);
         }
+
+        [Function("GetAllProducts")]
+        public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
+        {
+            _logger.LogInformation("Retrieving all products");
+
+            
+            var products = _context.Product.ToList();
+                      
+            if (!products.Any())
+            {
+                return new NotFoundObjectResult("No products found");
+            }
+
+            return new OkObjectResult(products);
+        }
+
     }
 }
