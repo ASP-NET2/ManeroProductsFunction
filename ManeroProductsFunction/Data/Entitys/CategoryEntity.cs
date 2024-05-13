@@ -10,5 +10,6 @@ public class CategoryEntity
     public string CategoryName { get; set; } = null!;
     public string PartitionKey { get; set; } = "Category";
     public string Category { get; set; } = "Category";
+    public List<SubCategoryEntity> SubCategory { get; set; } = new List<SubCategoryEntity>();
 }
     

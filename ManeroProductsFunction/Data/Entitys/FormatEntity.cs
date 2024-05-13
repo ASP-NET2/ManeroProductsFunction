@@ -1,9 +1,8 @@
-﻿namespace ManeroProductsFunction.Data.Entitys
+﻿namespace ManeroProductsFunction.Data.Entitys;
+
+public class FormatEntity 
 {
-    public class FormatEntity 
-    {
-        public string FormatType { get; set; } = null!;
-        public string Price { get; set; } = null!;
-        public string? DiscountPrice { get; set; }
-    }
+    public string FormatType { get; set; } = null!;
+    public string Price { get; set; } = null!;
+    public string? DiscountPrice { get; set; }
 }

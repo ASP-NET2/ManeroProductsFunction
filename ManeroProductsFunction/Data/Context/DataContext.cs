@@ -5,7 +5,7 @@ namespace ManeroProductsFunction.Data.Context;
 
 public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
 {
-    public DbSet<ProductsEntity> Product { get; set; }
+    public DbSet<ProductEntity> Product { get; set; }
     public DbSet<CategoryEntity> Category { get; set; }
     public DbSet<SubCategoryEntity> SubCategory { get; set; }
     
@@ -13,7 +13,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ProductsEntity>()
+        modelBuilder.Entity<ProductEntity>()
             .ToContainer("Products")
             .HasPartitionKey(x => x.Products);
 
