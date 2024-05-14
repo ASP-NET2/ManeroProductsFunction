@@ -7,16 +7,10 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace ManeroProductsFunction.Functions;
-public class UpdateProduct
+public class UpdateProduct(ILogger<UpdateProduct> logger, DataContext context)
 {
-    private readonly ILogger<UpdateProduct> _logger;
-    private readonly DataContext _context;
-
-    public UpdateProduct(ILogger<UpdateProduct> logger, DataContext context)
-    {
-        _logger = logger;
-        _context = context;
-    }
+    private readonly ILogger<UpdateProduct> _logger = logger;
+    private readonly DataContext _context = context;
 
     [Function("UpdateProduct")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = null)] HttpRequest req)

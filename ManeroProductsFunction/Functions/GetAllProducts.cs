@@ -8,18 +8,12 @@ using Microsoft.Extensions.Logging;
 namespace ManeroProductsFunction.Functions;
 
 
-    public class GetAllProducts
-    {
-        private readonly ILogger<GetAllProducts> _logger;
-        private readonly DataContext _context;
+    public class GetAllProducts(ILogger<GetAllProducts> logger, DataContext context)
+{
+        private readonly ILogger<GetAllProducts> _logger = logger;
+        private readonly DataContext _context = context;
 
-        public GetAllProducts(ILogger<GetAllProducts> logger, DataContext context)
-        {
-            _logger = logger;
-            _context = context;
-        }
-
-        [Function("GetAllProducts")]
+    [Function("GetAllProducts")]
         public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
         {
             

@@ -21,7 +21,9 @@ public class ProductEntity
     public string? PublishDate { get; set; }
     public string? Publisher { get; set; }
     public string? ISBN { get; set; }
+    public List<string> ImageUrls { get; set; } = new List<string>();
     public List<CategoryEntity> Category{  get; set; } = new List<CategoryEntity>();
-    public List<FormatEntity> Format { get; set; } = new List<FormatEntity>();
     public List<SubCategoryEntity> SubCategory { get; set; } = new List<SubCategoryEntity>();
+    public List<FormatEntity> Format { get; set; } = new List<FormatEntity>();
+   
 }
