@@ -6,11 +6,11 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace ManeroProductsFunction.Functions;
+namespace ManeroProductsFunction.Functions.SubCategory;
 
-public class SubCategoryFunction(ILogger<SubCategoryFunction> logger, DataContext context)
+public class CreateSubCategory(ILogger<CreateSubCategory> logger, DataContext context)
 {
-    private readonly ILogger<SubCategoryFunction> _logger = logger;
+    private readonly ILogger<CreateSubCategory> _logger = logger;
     private readonly DataContext _context = context;
 
     [Function("CreateSubCategory")]

@@ -38,6 +38,7 @@ public class UpdateProduct(ILogger<UpdateProduct> logger, DataContext context)
 
             productToUpdate.Title = updatedProduct.Title;
             productToUpdate.Author = updatedProduct.Author;
+            productToUpdate.ImageUrls = updatedProduct.ImageUrls;
             productToUpdate.ShortDescription = updatedProduct.ShortDescription;
             productToUpdate.LongDescription = updatedProduct.LongDescription;
             productToUpdate.Language = updatedProduct.Language;
