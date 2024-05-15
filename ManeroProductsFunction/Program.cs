@@ -12,12 +12,6 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
         services.AddDbContext<DataContext>(x => x.UseCosmos(Environment.GetEnvironmentVariable("CosmosDB")!, Environment.GetEnvironmentVariable("ManeroProducts")!));
-        services.AddSingleton(x =>
-        {
-            var blobServiceClient = x.GetRequiredService<BlobServiceClient>();
-            return blobServiceClient.GetBlobContainerClient("images");
-        });
-
     })
 
     .Build();
