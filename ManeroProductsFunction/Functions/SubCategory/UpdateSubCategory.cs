@@ -32,7 +32,7 @@ public class UpdateSubCategory(ILogger<UpdateSubCategory> logger, DataContext co
 
 
             var subcategoryToUpdate = await _context.SubCategory
-                .SingleOrDefaultAsync(c => c.Id == updatedSubCategory.Id && c.PartitionKey == updatedSubCategory.PartitionKey);
+                .FirstOrDefaultAsync(c => c.Id == updatedSubCategory.Id && c.PartitionKey == updatedSubCategory.PartitionKey);
 
             if (subcategoryToUpdate == null)
             {
@@ -41,7 +41,7 @@ public class UpdateSubCategory(ILogger<UpdateSubCategory> logger, DataContext co
             }
 
 
-            subcategoryToUpdate.SubCategory = updatedSubCategory.SubCategory;
+            subcategoryToUpdate.SubCategoryName = updatedSubCategory.SubCategoryName;
 
 
             _context.SubCategory.Update(subcategoryToUpdate);

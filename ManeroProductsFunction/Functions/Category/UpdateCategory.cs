@@ -15,7 +15,7 @@ public class UpdateCategory(ILogger<UpdateCategory> logger, DataContext context)
     private readonly DataContext _context = context;
 
     [Function("UpdateCategory")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = null)] HttpRequest req)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "UpdateCategory")] HttpRequest req)
     {
         _logger.LogInformation("Processing update request for category.");
 
@@ -30,10 +30,7 @@ public class UpdateCategory(ILogger<UpdateCategory> logger, DataContext context)
                 return new BadRequestObjectResult("Invalid category data.");
             }
 
-            
-            var categoryToUpdate = await _context.Category
-                .SingleOrDefaultAsync(c => c.Id == updatedCategory.Id && c.PartitionKey == updatedCategory.PartitionKey);
-
+            var categoryToUpdate = await _context.Category.FindAsync(new object[] { updatedCategory.Id, updatedCategory.PartitionKey });
             if (categoryToUpdate == null)
             {
                 _logger.LogWarning($"Category with ID {updatedCategory.Id} and PartitionKey {updatedCategory.PartitionKey} not found.");
@@ -41,8 +38,7 @@ public class UpdateCategory(ILogger<UpdateCategory> logger, DataContext context)
             }
 
            
-            categoryToUpdate.Category = updatedCategory.Category;
-          
+            categoryToUpdate.CategoryName = updatedCategory.CategoryName;
 
             _context.Category.Update(categoryToUpdate);
             await _context.SaveChangesAsync();

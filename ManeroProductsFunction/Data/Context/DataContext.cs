@@ -15,15 +15,15 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     {
         modelBuilder.Entity<ProductEntity>()
             .ToContainer("Products")
-            .HasPartitionKey(x => x.Products);
+            .HasPartitionKey(x => x.PartitionKey);
 
         modelBuilder.Entity<CategoryEntity>()
             .ToContainer("Category")
-            .HasPartitionKey(x => x.Category);
+            .HasPartitionKey(x => x.PartitionKey);
 
         modelBuilder.Entity<SubCategoryEntity>()
             .ToContainer("SubCategorys")
-            .HasPartitionKey(x => x.SubCategory);
+            .HasPartitionKey(x => x.PartitionKey);
 
 
 
