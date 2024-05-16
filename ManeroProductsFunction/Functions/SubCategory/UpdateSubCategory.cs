@@ -1,11 +1,14 @@
 using ManeroProductsFunction.Data.Context;
 using ManeroProductsFunction.Data.Entitys;
+using ManeroProductsFunction.Functions.Category;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace ManeroProductsFunction.Functions.SubCategory;
 
@@ -15,9 +18,11 @@ public class UpdateSubCategory(ILogger<UpdateSubCategory> logger, DataContext co
     private readonly DataContext _context = context;
 
     [Function("UpdateSubCategory")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = null)] HttpRequest req)
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "UpdateSubCategory")] HttpRequestData req)
     {
         _logger.LogInformation("Processing update request for subcategory.");
+
+        var response = req.CreateResponse();
 
         try
         {
@@ -27,37 +32,42 @@ public class UpdateSubCategory(ILogger<UpdateSubCategory> logger, DataContext co
             if (updatedSubCategory == null)
             {
                 _logger.LogWarning("Invalid subcategory data received.");
-                return new BadRequestObjectResult("Invalid subcategory data.");
+                response.StatusCode = HttpStatusCode.BadRequest;
+                await response.WriteStringAsync("Invalid subcategory data.");
+                return response;
             }
 
-
-            var subcategoryToUpdate = await _context.SubCategory
-                .FirstOrDefaultAsync(c => c.Id == updatedSubCategory.Id && c.PartitionKey == updatedSubCategory.PartitionKey);
-
-            if (subcategoryToUpdate == null)
+            var subCategoryToUpdate = await _context.SubCategory.FindAsync(updatedSubCategory.Id, updatedSubCategory.PartitionKey);
+            if (subCategoryToUpdate == null)
             {
-                _logger.LogWarning($"Subcategory with ID {updatedSubCategory.Id} and PartitionKey {updatedSubCategory.PartitionKey} not found.");
-                return new NotFoundResult();
+                _logger.LogWarning($"SubCategory with ID {updatedSubCategory.Id} and PartitionKey {updatedSubCategory.PartitionKey} not found.");
+                response.StatusCode = HttpStatusCode.NotFound;
+                return response;
             }
 
+            subCategoryToUpdate.SubCategoryName = updatedSubCategory.SubCategoryName;
+            subCategoryToUpdate.ImageLink = updatedSubCategory.ImageLink;
 
-            subcategoryToUpdate.SubCategoryName = updatedSubCategory.SubCategoryName;
-
-
-            _context.SubCategory.Update(subcategoryToUpdate);
+            _context.SubCategory.Update(subCategoryToUpdate);
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(subcategoryToUpdate);
+            response.StatusCode = HttpStatusCode.OK;
+            await response.WriteAsJsonAsync(subCategoryToUpdate);
+            return response;
         }
         catch (JsonException ex)
         {
             _logger.LogError(ex, "Error parsing request body.");
-            return new BadRequestObjectResult("Error in request format or data.");
+            response.StatusCode = HttpStatusCode.BadRequest;
+            await response.WriteStringAsync("Error in request format or data.");
+            return response;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error occurred.");
-            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            response.StatusCode = HttpStatusCode.InternalServerError;
+            await response.WriteStringAsync("Unexpected error occurred.");
+            return response;
         }
     }
 }
