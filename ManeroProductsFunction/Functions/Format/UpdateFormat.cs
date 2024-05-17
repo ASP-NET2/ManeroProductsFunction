@@ -4,53 +4,52 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace ManeroProductsFunction.Functions.Category;
-public class UpdateCategory(ILogger<UpdateCategory> logger, DataContext context)
+namespace ManeroProductsFunction.Functions.Format;
+
+public class UpdateFormat(ILogger<UpdateFormat> logger, DataContext context)
 {
-    private readonly ILogger<UpdateCategory> _logger = logger;
+    private readonly ILogger<UpdateFormat> _logger = logger;
     private readonly DataContext _context = context;
 
-    [Function("UpdateCategory")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "UpdateCategory")] HttpRequestData req)
+    [Function("UpdateFormat")]
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "UpdateFormat")] HttpRequestData req)
     {
-        _logger.LogInformation("Processing update request for category.");
+        _logger.LogInformation("Processing update request for format.");
 
         var response = req.CreateResponse();
 
         try
         {
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            CategoryEntity updatedCategory = JsonConvert.DeserializeObject<CategoryEntity>(requestBody);
+            FormatEntity updatedFormat = JsonConvert.DeserializeObject<FormatEntity>(requestBody);
 
-            if (updatedCategory == null)
+            if (updatedFormat == null)
             {
-                _logger.LogWarning("Invalid category data received.");
+                _logger.LogWarning("Invalid format data received.");
                 response.StatusCode = HttpStatusCode.BadRequest;
-                await response.WriteStringAsync("Invalid category data.");
+                await response.WriteStringAsync("Invalid format data.");
                 return response;
             }
 
-            var categoryToUpdate = await _context.Category.FindAsync(updatedCategory.Id, updatedCategory.PartitionKey);
-            if (categoryToUpdate == null)
+            var formatToUpdate = await _context.Format.FindAsync(updatedFormat.Id, updatedFormat.PartitionKey);
+            if (formatToUpdate == null)
             {
-                _logger.LogWarning($"Category with ID {updatedCategory.Id} and PartitionKey {updatedCategory.PartitionKey} not found.");
+                _logger.LogWarning($"Format with ID {updatedFormat.Id} and PartitionKey {updatedFormat.PartitionKey} not found.");
                 response.StatusCode = HttpStatusCode.NotFound;
                 return response;
             }
 
-            categoryToUpdate.CategoryName = updatedCategory.CategoryName;
-            categoryToUpdate.ImageLink = updatedCategory.ImageLink;
+            formatToUpdate.FormatName = updatedFormat.FormatName;
 
-            _context.Category.Update(categoryToUpdate);
+            _context.Format.Update(formatToUpdate);
             await _context.SaveChangesAsync();
 
             response.StatusCode = HttpStatusCode.OK;
-            await response.WriteAsJsonAsync(categoryToUpdate);
+            await response.WriteAsJsonAsync(formatToUpdate);
             return response;
         }
         catch (JsonException ex)
