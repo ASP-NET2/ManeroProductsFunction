@@ -54,9 +54,9 @@ public class UpdateProduct(ILogger<UpdateProduct> logger, DataContext context)
             productToUpdate.PublishDate = updatedProduct.PublishDate;
             productToUpdate.Publisher = updatedProduct.Publisher;
             productToUpdate.ISBN = updatedProduct.ISBN;
-            productToUpdate.Category = updatedProduct.Category;
-            productToUpdate.SubCategory = updatedProduct.SubCategory;
-            productToUpdate.Format = updatedProduct.Format;
+            productToUpdate.CategoryName = updatedProduct.CategoryName;
+            productToUpdate.SubCategoryName = updatedProduct.SubCategoryName;
+            productToUpdate.FormatName = updatedProduct.FormatName;
 
             _context.Product.Update(productToUpdate);
             await _context.SaveChangesAsync();
