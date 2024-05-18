@@ -27,4 +27,7 @@ public class ProductEntity
     public string Category { get; set; } = null!;
     public string SubCategory { get; set; } = null!;
     public string Format { get; set; } = null!;
+    public bool OnSale { get; set; } = false;
+    public bool BestSeller { get; set; } = false;
+    public bool FeaturedProduct { get; set; } = false;
 }
