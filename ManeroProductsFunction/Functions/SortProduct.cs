@@ -26,7 +26,7 @@ namespace ManeroProductsFunction.Functions
 
             if (!string.IsNullOrEmpty(category))
             {
-                products = products.Where(p => p.Category.ToLower() == category).ToList();
+                products = products.Where(p => p.CategoryName.ToLower() == category).ToList();
             }
 
             return new OkObjectResult(products);
