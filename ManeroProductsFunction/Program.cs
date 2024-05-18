@@ -1,4 +1,3 @@
-using Azure.Storage.Blobs;
 using ManeroProductsFunction.Data.Context;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
