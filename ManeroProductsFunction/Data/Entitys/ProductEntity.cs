@@ -25,7 +25,6 @@ public class ProductEntity
     public string? ISBN { get; set; }
     public string ImageUrl { get; set; } = null!;
     public string CategoryName { get; set; } = null!;
-    public string Category {  get; set; } = null!;
     public string SubCategoryName { get; set; } = null!;
     public string FormatName { get; set; } = null!;
 }
