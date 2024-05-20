@@ -1,32 +1,35 @@
 using ManeroProductsFunction.Data.Context;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using System.Net;
 
-namespace ManeroProductsFunction.Functions;
-
-
-    public class GetAllProducts(ILogger<GetAllProducts> logger, DataContext context)
+namespace ManeroProductsFunction.Functions
 {
-        private readonly ILogger<GetAllProducts> _logger = logger;
-        private readonly DataContext _context = context;
+    public class GetAllProducts
+    {
+        private readonly ILogger<GetAllProducts> _logger;
+        private readonly DataContext _context;
 
-    [Function("GetAllProducts")]
-        public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+        public GetAllProducts(ILogger<GetAllProducts> logger, DataContext context)
         {
-            
+            _logger = logger;
+            _context = context;
+        }
+
+        [Function("GetAllProducts")]
+        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequestData req)
+        {
+            _logger.LogInformation("C# HTTP trigger function processed a request.");
+
             var products = await _context.Product.ToListAsync();
 
-            if (products == null || products.Count == 0)
-            {
-                
-                return new NoContentResult();
-            }
+            var response = req.CreateResponse(HttpStatusCode.OK);
+            await response.WriteAsJsonAsync(products);
 
-            
-            return new OkObjectResult(products);
+            return response;
         }
     }
-
+}
