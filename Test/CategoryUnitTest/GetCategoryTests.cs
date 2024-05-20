@@ -15,21 +15,21 @@ namespace Test.CategoryUnitTest
 {
     public class GetCategoryTests : IDisposable
     {
-        private readonly Mock<ILogger<GetCategory>> _mockLogger;
-        private readonly DataContext _context;
-        private readonly GetCategory _function;
+        private readonly Mock<ILogger<GetCategory>> _getMockLogger;
+        private readonly DataContext _getContext;
+        private readonly GetCategory _getFunction;
         private bool _disposed;
 
         public GetCategoryTests()
         {
-            _mockLogger = new Mock<ILogger<GetCategory>>();
+            _getMockLogger = new Mock<ILogger<GetCategory>>();
 
             var options = new DbContextOptionsBuilder<DataContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: "GetTestDatabase")
                 .Options;
-            _context = new DataContext(options);
+            _getContext = new DataContext(options);
 
-            _function = new GetCategory(_mockLogger.Object, _context);
+            _getFunction = new GetCategory(_getMockLogger.Object, _getContext);
         }
 
         private void SeedDatabase()
@@ -39,8 +39,8 @@ namespace Test.CategoryUnitTest
                 new CategoryEntity { Id = "1", CategoryName = "Category1", ImageLink = "link1" },
                 new CategoryEntity { Id = "2", CategoryName = "Category2", ImageLink = "link2" }
             };
-            _context.Category.AddRange(categories);
-            _context.SaveChanges();
+            _getContext.Category.AddRange(categories);
+            _getContext.SaveChanges();
         }
 
         [Fact]
@@ -51,10 +51,11 @@ namespace Test.CategoryUnitTest
             var request = new Mock<HttpRequest>();
 
             // Act
-            var result = await _function.RunGetAll(request.Object);
+            var result = await _getFunction.RunGetAll(request.Object);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.NotNull(okResult);
             var returnValue = Assert.IsType<List<CategoryEntity>>(okResult.Value);
             Assert.Equal(2, returnValue.Count);
         }
@@ -66,13 +67,11 @@ namespace Test.CategoryUnitTest
             var request = new Mock<HttpRequest>();
 
             // Act
-            var result = await _function.RunGetAll(request.Object);
+            var result = await _getFunction.RunGetAll(request.Object);
 
             // Assert
             Assert.IsType<NoContentResult>(result);
         }
-
-       
 
         protected virtual void Dispose(bool disposing)
         {
@@ -80,8 +79,8 @@ namespace Test.CategoryUnitTest
             {
                 if (disposing)
                 {
-                    _context.Database.EnsureDeleted();
-                    _context.Dispose();
+                    _getContext.Database.EnsureDeleted();
+                    _getContext.Dispose();
                 }
                 _disposed = true;
             }
