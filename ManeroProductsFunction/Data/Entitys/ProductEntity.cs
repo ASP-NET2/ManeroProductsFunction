@@ -18,9 +18,9 @@ public class ProductEntity
     public string? Publisher { get; set; }
     public string? ISBN { get; set; }
     public string? ImageUrl { get; set; } 
-    public bool OnSale { get; set; } = false;
-    public bool BestSeller { get; set; } = false;
-    public bool FeaturedProduct { get; set; } = false;
+    public bool? OnSale { get; set; }
+    public bool? BestSeller { get; set; } 
+    public bool? FeaturedProduct { get; set; }
     public string? CategoryName { get; set; } 
     public string? SubCategoryName { get; set; } 
     public string? FormatName { get; set; }
