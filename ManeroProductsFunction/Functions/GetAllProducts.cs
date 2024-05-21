@@ -1,35 +1,65 @@
 using ManeroProductsFunction.Data.Context;
+using ManeroProductsFunction.Data.Entitys;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System.Net;
+using Newtonsoft.Json;
 
-namespace ManeroProductsFunction.Functions
+namespace ManeroProductsFunction.Functions;
+
+public class GetAllProducts(ILogger<GetAllProducts> logger, DataContext context)
 {
-    public class GetAllProducts
+    private readonly ILogger<GetAllProducts> _logger = logger;
+    private readonly DataContext _context = context;
+
+    [Function("GetAllProducts")]
+    public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
     {
-        private readonly ILogger<GetAllProducts> _logger;
-        private readonly DataContext _context;
-
-        public GetAllProducts(ILogger<GetAllProducts> logger, DataContext context)
+        try
         {
-            _logger = logger;
-            _context = context;
-        }
+            _logger.LogInformation("Fetching products from the database.");
 
-        [Function("GetAllProducts")]
-        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequestData req)
-        {
-            _logger.LogInformation("C# HTTP trigger function processed a request.");
+            // Kontrollera att _context är korrekt initialiserad
+            if (_context == null)
+            {
+                _logger.LogError("DataContext is null.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+
+            // Kontrollera att Product DbSet är korrekt
+            if (_context.Product == null)
+            {
+                _logger.LogError("Product DbSet is null.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
 
             var products = await _context.Product.ToListAsync();
 
-            var response = req.CreateResponse(HttpStatusCode.OK);
-            await response.WriteAsJsonAsync(products);
+            // Lägg till en säkerhetskontroll innan du loggar antalet produkter
+            if (products == null)
+            {
+                _logger.LogError("Products list is null.");
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
 
-            return response;
+            _logger.LogInformation($"Products fetched: {products.Count}");
+
+            // Kontrollera om products är en tom lista
+            if (products.Count == 0)
+            {
+                _logger.LogInformation("Products list is empty.");
+                return new NoContentResult();
+            }
+
+            _logger.LogInformation($"Retrieved {products.Count} products.");
+            return new OkObjectResult(products);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"An error occurred while getting products: {ex.Message}", ex);
+            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
     }
 }

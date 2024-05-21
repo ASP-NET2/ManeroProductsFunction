@@ -15,17 +15,32 @@ public class CreateProduct(ILogger<CreateProduct> logger, DataContext context)
     private readonly DataContext _context = context;
 
     [Function("CreateProduct")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
     {
-        var body = await new StreamReader(req.Body).ReadToEndAsync();
-        var product = JsonConvert.DeserializeObject<ProductEntity>(body);
+        try
+        {
+           
+            var body = await new StreamReader(req.Body).ReadToEndAsync();
+            var product = JsonConvert.DeserializeObject<ProductEntity>(body);
 
-        _context.Product.Add(product);
-        await _context.SaveChangesAsync();
+            
+            _context.Product.Add(product);
+            await _context.SaveChangesAsync();
 
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        await response.WriteAsJsonAsync(product);
+         
+            var response = new OkObjectResult(product);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error creating product: {ex.Message}");
 
-        return response;
+            
+            var errorResponse = new ObjectResult(new { error = ex.Message })
+            {
+                StatusCode = (int)HttpStatusCode.InternalServerError
+            };
+            return errorResponse;
+        }
     }
 }

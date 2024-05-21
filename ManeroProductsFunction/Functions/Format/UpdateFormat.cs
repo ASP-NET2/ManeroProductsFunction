@@ -16,7 +16,7 @@ public class UpdateFormat(ILogger<UpdateFormat> logger, DataContext context)
     private readonly DataContext _context = context;
 
     [Function("UpdateFormat")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "UpdateFormat")] HttpRequestData req)
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put")] HttpRequestData req)
     {
         _logger.LogInformation("Processing update request for format.");
 

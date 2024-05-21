@@ -13,7 +13,7 @@ public class GetSubCategory(ILogger<GetSubCategory> logger, DataContext context)
     private readonly DataContext _context = context;
 
     [Function("GetSubCategory")]
-    public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+    public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
     {
         try
         {

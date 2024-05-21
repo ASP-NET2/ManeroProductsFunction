@@ -13,7 +13,7 @@ namespace ManeroProductsFunction.Functions.Category
         private readonly DataContext _context = context;
 
         [Function("GetCategory")]
-        public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+        public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             try
             {

@@ -18,7 +18,7 @@ public class UpdateSubCategory(ILogger<UpdateSubCategory> logger, DataContext co
     private readonly DataContext _context = context;
 
     [Function("UpdateSubCategory")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = "UpdateSubCategory")] HttpRequestData req)
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put")] HttpRequestData req)
     {
         _logger.LogInformation("Processing update request for subcategory.");
 

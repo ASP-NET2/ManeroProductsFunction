@@ -15,7 +15,7 @@ public class UpdateProduct(ILogger<UpdateProduct> logger, DataContext context)
     private readonly DataContext _context = context;
 
     [Function("UpdateProduct")]
-    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put", Route = null)] HttpRequestData req)
+    public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Function, "put")] HttpRequestData req)
     {
         _logger.LogInformation("Processing update request for product.");
 

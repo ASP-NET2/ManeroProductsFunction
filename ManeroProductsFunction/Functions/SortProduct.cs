@@ -13,7 +13,7 @@ namespace ManeroProductsFunction.Functions
         private readonly DataContext _context = context;
 
         [Function("SortProduct")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
         {
             var category = req.Query["category"].ToString().ToLower();
             var products = await _context.Product.ToListAsync();

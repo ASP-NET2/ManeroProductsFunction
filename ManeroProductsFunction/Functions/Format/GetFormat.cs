@@ -14,7 +14,7 @@ public class GetFormat(ILogger<GetFormat> logger, DataContext context)
     private readonly DataContext _context = context;
 
     [Function("GetFormat")]
-    public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+    public async Task<IActionResult> RunGetAll([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
     {
         try
         {

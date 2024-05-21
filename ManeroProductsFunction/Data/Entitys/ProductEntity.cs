@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ManeroProductsFunction.Data.Entitys;
+﻿namespace ManeroProductsFunction.Data.Entitys;
 
 public class ProductEntity
 {
@@ -12,9 +6,9 @@ public class ProductEntity
     public DateTime Created { get; set; } = DateTime.Now;
     public string PartitionKey { get; set; } = "Products";
     public string Products { get; set; } = "Products";
-    public string Author { get; set; } = null!;
-    public string Title { get; set; } = null!;
-    public string Price { get; set; } = null!;
+    public string Author { get; set; } = null!; 
+    public string Title { get; set; }= null!;
+    public string? Price { get; set; } 
     public string? DiscountPrice { get; set; }
     public string? ShortDescription { get; set; }
     public string? LongDescription { get; set; }
@@ -23,14 +17,13 @@ public class ProductEntity
     public string? PublishDate { get; set; }
     public string? Publisher { get; set; }
     public string? ISBN { get; set; }
-    public string ImageUrl { get; set; } = null!;
-    public string Category { get; set; } = null!;
-    public string SubCategory { get; set; } = null!;
-    public string Format { get; set; } = null!;
+    public string? ImageUrl { get; set; } 
     public bool OnSale { get; set; } = false;
     public bool BestSeller { get; set; } = false;
     public bool FeaturedProduct { get; set; } = false;
-    public string CategoryName { get; set; } = null!;
-    public string SubCategoryName { get; set; } = null!;
-    public string FormatName { get; set; } = null!;
+    public string? CategoryName { get; set; } 
+    public string? SubCategoryName { get; set; } 
+    public string? FormatName { get; set; }
+   
+
 }
