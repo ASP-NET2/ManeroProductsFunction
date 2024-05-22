@@ -18,6 +18,7 @@ namespace ManeroProductsFunction.Functions
             var category = req.Query["category"].ToString().ToLower();
             var subCategory = req.Query["subCategory"].ToString().ToLower();
             var format = req.Query["format"].ToString().ToLower();
+            var title = req.Query["title"].ToString().ToLower();
             var onSaleQuary = req.Query["onSale"].ToString().ToLower();
             var bestSellerQuary = req.Query["bestSeller"].ToString().ToLower();
             var featuredProductQuary = req.Query["featuredProduct"].ToString().ToLower();
@@ -41,6 +42,11 @@ namespace ManeroProductsFunction.Functions
             if (!string.IsNullOrEmpty(format))
             {
                 products = products.Where(p => p.FormatName!.ToLower() == format).ToList();
+            }
+            
+            if (!string.IsNullOrEmpty(title))
+            {
+                products = products.Where(p => p.Title!.ToLower() == title).ToList();
             }
             
             if (!string.IsNullOrEmpty(subCategory))

@@ -34,9 +34,9 @@ namespace Test.SortTest
         {
             context.Product.AddRange(new List<ProductEntity>
     {
-        new ProductEntity { CategoryName = "electronics", SubCategoryName = "phones", FormatName = "new", Price = "300", OnSale = true, BestSeller = true, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "pris300" },
-        new ProductEntity { CategoryName = "electronics", SubCategoryName = "laptops", FormatName = "new", Price = "1200", OnSale = false, BestSeller = false, FeaturedProduct = true, IsFavorite = false, Author = "Thomas Hallström", Title = "pris1200" },
-        new ProductEntity { CategoryName = "home", SubCategoryName = "furniture", FormatName = "used", Price = "200", OnSale = true, BestSeller = false, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "World leader" }
+        new ProductEntity { CategoryName = "electronics", SubCategoryName = "phones", FormatName = "new", Price = "300", OnSale = true, BestSeller = true, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "Barn av vår tid" },
+        new ProductEntity { CategoryName = "electronics", SubCategoryName = "laptops", FormatName = "new", Price = "1200", OnSale = false, BestSeller = false, FeaturedProduct = true, IsFavorite = false, Author = "Thomas Hallström", Title = "Kolla kolla" },
+        new ProductEntity { CategoryName = "home", SubCategoryName = "furniture", FormatName = "used", Price = "200", OnSale = true, BestSeller = false, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "Livet är en fest" }
     });
             context.SaveChanges();
         }
@@ -197,6 +197,39 @@ namespace Test.SortTest
                 _mockLogger.Object.LogInformation("Product: {Title}, {IsFavorite}", product.Title, product.IsFavorite);
             }
         }
+
+        [Fact]
+        public async Task Run_FiltersByTitle()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var function = new SortProduct(_mockLogger.Object, context);
+
+            // Act
+            var result = await function.Run(CreateHttpRequest(new Dictionary<string, string> { { "title", "Barn av vår tid" } }));
+
+            // Log result for debugging purposes
+            _mockLogger.Object.LogInformation("Result: {Result}", result);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var products = Assert.IsType<List<ProductEntity>>(okResult.Value);
+
+            // Log products for debugging purposes
+            _mockLogger.Object.LogInformation("Filtered Products by Title: {Products}", products);
+
+            // Check intermediate state
+            Assert.NotEmpty(products);
+            Assert.Single(products); // Förväntar 1 produkt med den titeln
+
+            // Verify individual product details
+            foreach (var product in products)
+            {
+                Assert.Equal("Barn av vår tid", product.Title);
+                _mockLogger.Object.LogInformation("Product: {Title}, {Price}", product.Title, product.Price);
+            }
+        }
+
 
     }
 }
