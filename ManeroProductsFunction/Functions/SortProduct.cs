@@ -21,6 +21,7 @@ namespace ManeroProductsFunction.Functions
             var onSaleQuary = req.Query["onSale"].ToString().ToLower();
             var bestSellerQuary = req.Query["bestSeller"].ToString().ToLower();
             var featuredProductQuary = req.Query["featuredProduct"].ToString().ToLower();
+            var isFavoriteQuary = req.Query["isFavorite"].ToString().ToLower();
             var minPriceQuery = req.Query["minPrice"].ToString();
             var maxPriceQuery = req.Query["maxPrice"].ToString();
 
@@ -60,6 +61,11 @@ namespace ManeroProductsFunction.Functions
             if (!string.IsNullOrEmpty(featuredProductQuary) && bool.TryParse(featuredProductQuary, out bool featuredProduct))
             {
                 products = products.Where(p => p.FeaturedProduct == featuredProduct).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(isFavoriteQuary) && bool.TryParse(isFavoriteQuary, out bool isFavorite))
+            {
+                products = products.Where(p => p.IsFavorite == isFavorite).ToList();
             }
 
             if (decimal.TryParse(minPriceQuery, out decimal minPrice))

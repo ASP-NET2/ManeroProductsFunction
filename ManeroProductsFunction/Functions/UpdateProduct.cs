@@ -57,6 +57,7 @@ public class UpdateProduct(ILogger<UpdateProduct> logger, DataContext context)
             productToUpdate.CategoryName = updatedProduct.CategoryName;
             productToUpdate.SubCategoryName = updatedProduct.SubCategoryName;
             productToUpdate.FormatName = updatedProduct.FormatName;
+            productToUpdate.IsFavorite = updatedProduct.IsFavorite;
 
             _context.Product.Update(productToUpdate);
             await _context.SaveChangesAsync();

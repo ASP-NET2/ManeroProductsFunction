@@ -20,6 +20,7 @@ public class ProductEntity
     public string? ImageUrl { get; set; } 
     public bool? OnSale { get; set; }
     public bool? BestSeller { get; set; } 
+    public bool? IsFavorite { get; set; }
     public bool? FeaturedProduct { get; set; }
     public string? CategoryName { get; set; } 
     public string? SubCategoryName { get; set; } 

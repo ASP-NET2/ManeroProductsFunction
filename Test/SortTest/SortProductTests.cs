@@ -1,15 +1,11 @@
 ﻿using ManeroProductsFunction.Data.Context;
 using ManeroProductsFunction.Data.Entitys;
 using ManeroProductsFunction.Functions;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace Test.SortTest
 {
@@ -37,11 +33,11 @@ namespace Test.SortTest
         private void SeedDatabase(DataContext context)
         {
             context.Product.AddRange(new List<ProductEntity>
-            {
-                new ProductEntity { CategoryName = "electronics", SubCategoryName = "phones", FormatName = "new", Price = "300", OnSale = true, BestSeller = true, FeaturedProduct = false, Author = "Thomas Hallström", Title = "pris300" },
-                new ProductEntity { CategoryName = "electronics", SubCategoryName = "laptops", FormatName = "new", Price = "1200", OnSale = false, BestSeller = false, FeaturedProduct = true, Author = "Thomas Hallström", Title = "pris1200" },
-                new ProductEntity { CategoryName = "home", SubCategoryName = "furniture", FormatName = "used", Price = "200", OnSale = true, BestSeller = false, FeaturedProduct = false, Author = "Thomas Hallström", Title = "World leader" }
-            });
+    {
+        new ProductEntity { CategoryName = "electronics", SubCategoryName = "phones", FormatName = "new", Price = "300", OnSale = true, BestSeller = true, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "pris300" },
+        new ProductEntity { CategoryName = "electronics", SubCategoryName = "laptops", FormatName = "new", Price = "1200", OnSale = false, BestSeller = false, FeaturedProduct = true, IsFavorite = false, Author = "Thomas Hallström", Title = "pris1200" },
+        new ProductEntity { CategoryName = "home", SubCategoryName = "furniture", FormatName = "used", Price = "200", OnSale = true, BestSeller = false, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "World leader" }
+    });
             context.SaveChanges();
         }
 
@@ -170,5 +166,37 @@ namespace Test.SortTest
                 _mockLogger.Object.LogInformation("Product: {Title}, {OnSale}", product.Title, product.OnSale);
             }
         }
+
+        [Fact]
+        public async Task Run_FiltersByIsFavorite()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var function = new SortProduct(_mockLogger.Object, context);
+
+            // Act
+            var result = await function.Run(CreateHttpRequest(new Dictionary<string, string> { { "isFavorite", "true" } }));
+
+            // Log result for debugging purposes
+            _mockLogger.Object.LogInformation("Result: {Result}", result);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var products = Assert.IsType<List<ProductEntity>>(okResult.Value);
+
+            // Log products for debugging purposes
+            _mockLogger.Object.LogInformation("Filtered Products by IsFavorite: {Products}", products);
+
+            // Check intermediate state
+            Assert.NotEmpty(products);
+
+            // Verify individual product details
+            foreach (var product in products)
+            {
+                Assert.True(product.IsFavorite);
+                _mockLogger.Object.LogInformation("Product: {Title}, {IsFavorite}", product.Title, product.IsFavorite);
+            }
+        }
+
     }
 }
