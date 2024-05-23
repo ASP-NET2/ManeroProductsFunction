@@ -2,24 +2,21 @@ using ManeroProductsFunction.Data.Context;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
-namespace ManeroProductsFunction.Functions;
+namespace ManeroProductsFunction.Functions.Category;
 
-public class DeleteProduct(ILogger<DeleteProduct> logger, DataContext context)
+public class DeletePRoduct(ILogger<DeletePRoduct> logger, DataContext context)
 {
-    private readonly ILogger<DeleteProduct> _logger = logger;
+    private readonly ILogger<DeletePRoduct> _logger = logger;
     private readonly DataContext _context = context;
 
-    [FunctionName("DeleteProduct")]
-    public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "product/{id}")] HttpRequest req,
-        string id)
+
+    [Function("DeletePRoduct")]
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "product/{id}")] HttpRequest req, string id)
     {
         _logger.LogInformation("HTTP trigger function processed a delete request.");
-
-        var partitionKey = "Products";
 
         if (string.IsNullOrEmpty(id))
         {
@@ -29,10 +26,11 @@ public class DeleteProduct(ILogger<DeleteProduct> logger, DataContext context)
 
         try
         {
-            var product = await _context.Product.FindAsync(new object[] { id, partitionKey });
+            var product = await _context.Product
+                                         .SingleOrDefaultAsync(c => c.Id == id && c.PartitionKey == "Products");
             if (product == null)
             {
-                _logger.LogInformation($"Product with ID: {id} not found in partition {partitionKey}.");
+                _logger.LogInformation($"Product with ID: {id} not found in partition 'Products'.");
                 return new NotFoundResult();
             }
 
@@ -43,7 +41,7 @@ public class DeleteProduct(ILogger<DeleteProduct> logger, DataContext context)
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error occurred while trying to delete product with ID: {id} in partition {partitionKey}. Error: {ex.Message}");
+            _logger.LogError($"Error occurred while trying to delete product with ID: {id} in partition 'Products'. Error: {ex.Message}", ex);
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
     }
