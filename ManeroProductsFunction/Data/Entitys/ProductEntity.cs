@@ -25,6 +25,5 @@ public class ProductEntity
     public string? CategoryName { get; set; } 
     public string? SubCategoryName { get; set; } 
     public string? FormatName { get; set; }
-   
-
+    public decimal? Rating { get; set; }
 }
