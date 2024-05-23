@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
+using System.Globalization;
 
 namespace Test.SortTest
 {
@@ -34,9 +35,9 @@ namespace Test.SortTest
         {
             context.Product.AddRange(new List<ProductEntity>
     {
-        new ProductEntity { CategoryName = "electronics", SubCategoryName = "phones", FormatName = "new", Price = "300", OnSale = true, BestSeller = true, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "Barn av vår tid" },
-        new ProductEntity { CategoryName = "electronics", SubCategoryName = "laptops", FormatName = "new", Price = "1200", OnSale = false, BestSeller = false, FeaturedProduct = true, IsFavorite = false, Author = "Thomas Hallström", Title = "Kolla kolla" },
-        new ProductEntity { CategoryName = "home", SubCategoryName = "furniture", FormatName = "used", Price = "200", OnSale = true, BestSeller = false, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "Livet är en fest" }
+        new ProductEntity { CategoryName = "electronics", SubCategoryName = "phones", FormatName = "new", Price = "300", OnSale = true, BestSeller = true, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "Barn av vår tid", Rating="4,5"  },
+        new ProductEntity { CategoryName = "electronics", SubCategoryName = "laptops", FormatName = "new", Price = "1200", OnSale = false, BestSeller = false, FeaturedProduct = true, IsFavorite = false, Author = "Thomas Hallström", Title = "Kolla kolla", Rating="4,8" },
+        new ProductEntity { CategoryName = "home", SubCategoryName = "furniture", FormatName = "used", Price = "200", OnSale = true, BestSeller = false, FeaturedProduct = false, IsFavorite = true, Author = "Thomas Hallström", Title = "Livet är en fest", Rating = null }
     });
             context.SaveChanges();
         }
@@ -228,6 +229,81 @@ namespace Test.SortTest
                 Assert.Equal("Barn av vår tid", product.Title);
                 _mockLogger.Object.LogInformation("Product: {Title}, {Price}", product.Title, product.Price);
             }
+        }
+        [Fact]
+        public async Task Run_FiltersByRatingNotNull()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var function = new SortProduct(_mockLogger.Object, context);
+
+            // Act
+            var result = await function.Run(CreateHttpRequest(new Dictionary<string, string> { { "ratingNotNull", "true" } }));
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var products = Assert.IsType<List<ProductEntity>>(okResult.Value);
+
+            Assert.NotEmpty(products);
+            Assert.All(products, p => Assert.NotNull(p.Rating));
+        }
+
+        [Fact]
+        public async Task Run_FiltersByMinRating()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var function = new SortProduct(_mockLogger.Object, context);
+
+            // Act
+            var result = await function.Run(CreateHttpRequest(new Dictionary<string, string> { { "minRating", "4,0" } }));
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var products = Assert.IsType<List<ProductEntity>>(okResult.Value);
+
+            Assert.NotEmpty(products);
+            Assert.All(products, p => Assert.True(decimal.Parse(p.Rating.Replace(",", "."), CultureInfo.InvariantCulture) >= 4.0m));
+        }
+
+        [Fact]
+        public async Task Run_FiltersByMaxRating()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var function = new SortProduct(_mockLogger.Object, context);
+
+            // Act
+            var result = await function.Run(CreateHttpRequest(new Dictionary<string, string> { { "maxRating", "4,5" } }));
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var products = Assert.IsType<List<ProductEntity>>(okResult.Value);
+
+            Assert.NotEmpty(products);
+            Assert.All(products, p => Assert.True(decimal.Parse(p.Rating.Replace(",", "."), CultureInfo.InvariantCulture) <= 4.5m));
+        }
+
+        [Fact]
+        public async Task Run_FiltersByRatingRange()
+        {
+            // Arrange
+            var context = GetInMemoryContext();
+            var function = new SortProduct(_mockLogger.Object, context);
+
+            // Act
+            var result = await function.Run(CreateHttpRequest(new Dictionary<string, string> { { "minRating", "4,0" }, { "maxRating", "4,8" } }));
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var products = Assert.IsType<List<ProductEntity>>(okResult.Value);
+
+            Assert.NotEmpty(products);
+            Assert.All(products, p =>
+            {
+                var rating = decimal.Parse(p.Rating.Replace(",", "."), CultureInfo.InvariantCulture);
+                Assert.True(rating >= 4.0m && rating <= 4.8m);
+            });
         }
 
 

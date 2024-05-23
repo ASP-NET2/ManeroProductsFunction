@@ -4,13 +4,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ManeroProductsFunction.Functions
 {
-    public class SortProduct(ILogger<SortProduct> logger, DataContext context)
+    public class SortProduct
     {
-        private readonly ILogger<SortProduct> _logger = logger;
-        private readonly DataContext _context = context;
+        private readonly ILogger<SortProduct> _logger;
+        private readonly DataContext _context;
+
+        public SortProduct(ILogger<SortProduct> logger, DataContext context)
+        {
+            _logger = logger;
+            _context = context;
+        }
 
         [Function("SortProduct")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequest req)
@@ -25,9 +33,11 @@ namespace ManeroProductsFunction.Functions
             var isFavoriteQuary = req.Query["isFavorite"].ToString().ToLower();
             var minPriceQuery = req.Query["minPrice"].ToString();
             var maxPriceQuery = req.Query["maxPrice"].ToString();
+            var ratingNotNullQuery = req.Query["ratingNotNull"].ToString().ToLower();
+            var minRatingQuery = req.Query["minRating"].ToString();
+            var maxRatingQuery = req.Query["maxRating"].ToString();
 
             var products = await _context.Product.ToListAsync();
-            
 
             if (products == null || products.Count == 0)
             {
@@ -43,12 +53,12 @@ namespace ManeroProductsFunction.Functions
             {
                 products = products.Where(p => p.FormatName!.ToLower() == format).ToList();
             }
-            
+
             if (!string.IsNullOrEmpty(title))
             {
                 products = products.Where(p => p.Title!.ToLower() == title).ToList();
             }
-            
+
             if (!string.IsNullOrEmpty(subCategory))
             {
                 products = products.Where(p => p.SubCategoryName!.ToLower() == subCategory).ToList();
@@ -83,6 +93,22 @@ namespace ManeroProductsFunction.Functions
             {
                 products = products.Where(p => decimal.TryParse(p.Price, out decimal price) && price <= maxPrice).ToList();
             }
+
+            if (!string.IsNullOrEmpty(ratingNotNullQuery) && bool.TryParse(ratingNotNullQuery, out bool ratingNotNull) && ratingNotNull)
+            {
+                products = products.Where(p => p.Rating != null).ToList();
+            }
+
+            if (decimal.TryParse(minRatingQuery, out decimal minRating))
+            {
+                products = products.Where(p => decimal.TryParse(p.Rating, out decimal rating) && rating >= minRating).ToList();
+            }
+
+            if (decimal.TryParse(maxRatingQuery, out decimal maxRating))
+            {
+                products = products.Where(p => decimal.TryParse(p.Rating, out decimal rating) && rating <= maxRating).ToList();
+            }
+
             return new OkObjectResult(products);
         }
     }
