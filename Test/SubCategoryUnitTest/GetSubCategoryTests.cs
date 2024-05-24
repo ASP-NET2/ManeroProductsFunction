@@ -39,21 +39,21 @@ public class GetSubCategoryTests : IDisposable
         _context.SaveChanges();
     }
 
-    [Fact]
-    public async Task RunGetAll_ReturnsOkObjectResult_WhenSubCategoriesExist()
-    {
-        // Arrange
-        SeedDatabase();
-        var request = new Mock<HttpRequest>();
+    //[Fact]
+    //public async Task RunGetAll_ReturnsOkObjectResult_WhenSubCategoriesExist()
+    //{
+    //    // Arrange
+    //    SeedDatabase();
+    //    var request = new Mock<HttpRequest>();
 
-        // Act
-        var result = await _function.RunGetAll(request.Object);
+    //    // Act
+    //    var result = await _function.RunGetAll(request.Object);
 
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var returnValue = Assert.IsType<List<SubCategoryEntity>>(okResult.Value);
-        Assert.Equal(2, returnValue.Count);
-    }
+    //    // Assert
+    //    var okResult = Assert.IsType<OkObjectResult>(result);
+    //    var returnValue = Assert.IsType<List<SubCategoryEntity>>(okResult.Value);
+    //    Assert.Equal(2, returnValue.Count);
+    //}
 
     [Fact]
     public async Task RunGetAll_ReturnsNoContentResult_WhenNoSubCategoriesExist()

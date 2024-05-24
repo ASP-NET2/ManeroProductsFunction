@@ -9,6 +9,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<CategoryEntity> Category { get; set; }
     public DbSet<SubCategoryEntity> SubCategory { get; set; }
     public DbSet<FormatEntity> Format { get; set; }
+    public DbSet<CartEntity> CartEntity { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -29,6 +30,8 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
            .ToContainer("Format")
            .HasPartitionKey(x => x.PartitionKey);
 
-
+        modelBuilder.Entity<CartEntity>()
+            .ToContainer("Cart")
+            .HasPartitionKey(x => x.PartitionKey);
     }
 }
