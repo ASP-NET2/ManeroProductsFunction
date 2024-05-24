@@ -36,6 +36,7 @@ namespace ManeroProductsFunction.Functions
             var ratingNotNullQuery = req.Query["ratingNotNull"].ToString().ToLower();
             var minRatingQuery = req.Query["minRating"].ToString();
             var maxRatingQuery = req.Query["maxRating"].ToString();
+            var id = req.Query["id"].ToString().ToLower();
 
             var products = await _context.Product.ToListAsync();
 
@@ -58,6 +59,11 @@ namespace ManeroProductsFunction.Functions
             {
                 products = products.Where(p => p.Title!.ToLower() == title).ToList();
             }
+            
+            if (!string.IsNullOrEmpty(id))
+            {
+                products = products.Where(p => p.Id!.ToLower() == id).ToList();
+            }
 
             if (!string.IsNullOrEmpty(subCategory))
             {
@@ -68,6 +74,8 @@ namespace ManeroProductsFunction.Functions
             {
                 products = products.Where(p => p.OnSale == onSale).ToList();
             }
+
+            
 
             if (!string.IsNullOrEmpty(bestSellerQuary) && bool.TryParse(bestSellerQuary, out bool bestSeller))
             {

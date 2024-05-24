@@ -305,7 +305,5 @@ namespace Test.SortTest
                 Assert.True(rating >= 4.0m && rating <= 4.8m);
             });
         }
-
-
     }
 }
