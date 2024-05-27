@@ -25,7 +25,7 @@ namespace Test.CartTest
         {
             _mockLogger = new Mock<ILogger<DeleteProductFromUserCart>>();
             _options = new DbContextOptionsBuilder<DataContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
             InitializeContext();
@@ -45,74 +45,74 @@ namespace Test.CartTest
             await _context.SaveChangesAsync();
         }
 
-        //[Fact]
-        //public async Task Run_ReturnsNotFound_WhenCartDoesNotExist()
-        //{
-        //    // Arrange
-        //    await ClearDatabaseAsync();
-        //    InitializeContext();
-        //    var req = new Mock<HttpRequest>();
-        //    string cartId = Guid.NewGuid().ToString();
-        //    string productId = Guid.NewGuid().ToString();
+        [Fact]
+        public async Task Run_ReturnsNotFound_WhenCartDoesNotExist()
+        {
+            // Arrange
+            await ClearDatabaseAsync();
+            InitializeContext();
+            var req = new Mock<HttpRequest>();
+            string cartId = Guid.NewGuid().ToString();
+            string productId = Guid.NewGuid().ToString();
 
-        //    // Act
-        //    var result = await _function.Run(req.Object, cartId, productId);
+            // Act
+            var result = await _function.Run(req.Object, cartId, productId);
 
-        //    // Assert
-        //    var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        //    Assert.Equal("Cart not found.", notFoundResult.Value);
-        //}
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Cart not found.", notFoundResult.Value);
+        }
 
-        //[Fact]
-        //public async Task Run_ReturnsNotFound_WhenProductDoesNotExistInCart()
-        //{
-        //    // Arrange
-        //    await ClearDatabaseAsync();
-        //    InitializeContext();
-        //    var cart = new CartEntity { Id = Guid.NewGuid().ToString(), Products = new List<CartProductEntity>() };
-        //    _context.CartEntity.Add(cart);
-        //    await _context.SaveChangesAsync();
+        [Fact]
+        public async Task Run_ReturnsNotFound_WhenProductDoesNotExistInCart()
+        {
+            // Arrange
+            await ClearDatabaseAsync();
+            InitializeContext();
+            var cart = new CartEntity { Id = Guid.NewGuid().ToString(), Products = new List<CartProductEntity>() };
+            _context.CartEntity.Add(cart);
+            await _context.SaveChangesAsync();
 
-        //    var req = new Mock<HttpRequest>();
-        //    string cartId = cart.Id;
-        //    string productId = Guid.NewGuid().ToString();
+            var req = new Mock<HttpRequest>();
+            string cartId = cart.Id;
+            string productId = Guid.NewGuid().ToString();
 
-        //    // Act
-        //    var result = await _function.Run(req.Object, cartId, productId);
+            // Act
+            var result = await _function.Run(req.Object, cartId, productId);
 
-        //    // Assert
-        //    var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-        //    Assert.Equal("Product not found in the cart.", notFoundResult.Value);
-        //}
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Product not found in the cart.", notFoundResult.Value);
+        }
 
-        //[Fact]
-        //public async Task Run_ReturnsOk_WhenProductIsRemoved()
-        //{
-        //    // Arrange
-        //    await ClearDatabaseAsync();
-        //    InitializeContext();
-        //    var cart = new CartEntity
-        //    {
-        //        Id = Guid.NewGuid().ToString(),
-        //        Products = new List<CartProductEntity>
-        //        {
-        //            new CartProductEntity { ProductId = Guid.NewGuid().ToString(), ProductName = "Test Product", Quantity = 1, Price = 100 }
-        //        }
-        //    };
-        //    _context.CartEntity.Add(cart);
-        //    await _context.SaveChangesAsync();
+        [Fact]
+        public async Task Run_ReturnsOk_WhenProductIsRemoved()
+        {
+            // Arrange
+            await ClearDatabaseAsync();
+            InitializeContext();
+            var cart = new CartEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                Products = new List<CartProductEntity>
+                {
+                    new CartProductEntity { ProductId = Guid.NewGuid().ToString(), ProductName = "Test Product", Quantity = 1, Price = 100 }
+                }
+            };
+            _context.CartEntity.Add(cart);
+            await _context.SaveChangesAsync();
 
-        //    var req = new Mock<HttpRequest>();
-        //    string cartId = cart.Id;
-        //    string productId = cart.Products.First().ProductId;
+            var req = new Mock<HttpRequest>();
+            string cartId = cart.Id;
+            string productId = cart.Products.First().ProductId;
 
-        //    // Act
-        //    var result = await _function.Run(req.Object, cartId, productId);
+            // Act
+            var result = await _function.Run(req.Object, cartId, productId);
 
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var returnedCart = Assert.IsType<CartEntity>(okResult.Value);
-        //    Assert.DoesNotContain(returnedCart.Products, p => p.ProductId == productId);
-        //}
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedCart = Assert.IsType<CartEntity>(okResult.Value);
+            Assert.DoesNotContain(returnedCart.Products, p => p.ProductId == productId);
+        }
     }
 }

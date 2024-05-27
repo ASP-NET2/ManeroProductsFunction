@@ -49,42 +49,42 @@ namespace Test.CartTest
             Console.WriteLine($"{phase} - Cart Count: {cartCount}, Product Count: {productCount}");
         }
 
-        //[Fact]
-        //public async Task DecreaseQuantityFromUserCart_ProductQuantityDecreased_ReturnsOkObjectResult()
-        //{
-        //    // Arrange
-        //    LogDatabaseState("Before Arrange");
-        //    var context = CreateContext();
-        //    var function = new DecreaseQuantityFromUserCart(_mockLogger.Object, context);
+        [Fact]
+        public async Task DecreaseQuantityFromUserCart_ProductQuantityDecreased_ReturnsOkObjectResult()
+        {
+            // Arrange
+            LogDatabaseState("Before Arrange");
+            var context = CreateContext();
+            var function = new DecreaseQuantityFromUserCart(_mockLogger.Object, context);
 
-        //    var productId = Guid.NewGuid().ToString();
-        //    var cart = new CartEntity
-        //    {
-        //        Id = Guid.NewGuid().ToString(),
-        //        PartitionKey = "Cart",
-        //        Cart = "Cart",
-        //        CreatedDate = DateTime.Now,
-        //        Products = new List<CartProductEntity>
-        //        {
-        //            new CartProductEntity { ProductId = productId, ProductName = "Existing Product", Quantity = 2, Price = 10 }
-        //        }
-        //    };
-        //    context.CartEntity.Add(cart);
-        //    await context.SaveChangesAsync();
-        //    LogDatabaseState("After Arrange");
+            var productId = Guid.NewGuid().ToString();
+            var cart = new CartEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                PartitionKey = "Cart",
+                Cart = "Cart",
+                CreatedDate = DateTime.Now,
+                Products = new List<CartProductEntity>
+                {
+                    new CartProductEntity { ProductId = productId, ProductName = "Existing Product", Quantity = 2, Price = 10 }
+                }
+            };
+            context.CartEntity.Add(cart);
+            await context.SaveChangesAsync();
+            LogDatabaseState("After Arrange");
 
-        //    var request = new Mock<HttpRequest>();
+            var request = new Mock<HttpRequest>();
 
-        //    // Act
-        //    var response = await function.Run(request.Object, cart.Id, productId);
+            // Act
+            var response = await function.Run(request.Object, cart.Id, productId);
 
-        //    // Assert
-        //    LogDatabaseState("After Act");
-        //    var result = Assert.IsType<OkObjectResult>(response);
-        //    var updatedCart = Assert.IsType<CartEntity>(result.Value);
-        //    var product = updatedCart.Products.First(p => p.ProductId == productId);
-        //    Assert.Equal(1, product.Quantity);
-        //}
+            // Assert
+            LogDatabaseState("After Act");
+            var result = Assert.IsType<OkObjectResult>(response);
+            var updatedCart = Assert.IsType<CartEntity>(result.Value);
+            var product = updatedCart.Products.First(p => p.ProductId == productId);
+            Assert.Equal(1, product.Quantity);
+        }
 
         [Fact]
         public async Task DecreaseQuantityFromUserCart_ProductRemovedWhenQuantityIsZero_ReturnsOkObjectResult()

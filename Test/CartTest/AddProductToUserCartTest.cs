@@ -25,7 +25,7 @@ namespace Test.CartTest
         {
             _mockLogger = new Mock<ILogger<AddproductToUserCart>>();
             _dbContextOptions = new DbContextOptionsBuilder<DataContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
         }
 
@@ -37,41 +37,41 @@ namespace Test.CartTest
             return context;
         }
 
-        //[Fact]
-        //public async Task AddProductToUserCart_ProductAdded_ReturnsOkObjectResult()
-        //{
-        //    // Arrange
-        //    var context = CreateContext();
-        //    var function = new AddproductToUserCart(_mockLogger.Object, context);
+        [Fact]
+        public async Task AddProductToUserCart_ProductAdded_ReturnsOkObjectResult()
+        {
+            // Arrange
+            var context = CreateContext();
+            var function = new AddproductToUserCart(_mockLogger.Object, context);
 
-        //    var cart = new CartEntity
-        //    {
-        //        Id = Guid.NewGuid().ToString(),
-        //        PartitionKey = "Cart",
-        //        Cart = "Cart",
-        //        CreatedDate = DateTime.Now,
-        //        Products = new List<CartProductEntity>
-        //        {
-        //            new CartProductEntity { ProductId = Guid.NewGuid().ToString(), ProductName = "Existing Product", Quantity = 1, Price = 10 }
-        //        }
-        //    };
-        //    context.CartEntity.Add(cart);
-        //    await context.SaveChangesAsync();
+            var cart = new CartEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                PartitionKey = "Cart",
+                Cart = "Cart",
+                CreatedDate = DateTime.Now,
+                Products = new List<CartProductEntity>
+                {
+                    new CartProductEntity { ProductId = Guid.NewGuid().ToString(), ProductName = "Existing Product", Quantity = 1, Price = 10 }
+                }
+            };
+            context.CartEntity.Add(cart);
+            await context.SaveChangesAsync();
 
-        //    var newProduct = new CartProductEntity { ProductName = "New Product", Quantity = 2, Price = 20 };
-        //    var requestBody = JsonConvert.SerializeObject(newProduct);
-        //    var request = new Mock<HttpRequest>();
-        //    request.Setup(r => r.Body).Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(requestBody)));
+            var newProduct = new CartProductEntity { ProductName = "New Product", Quantity = 2, Price = 20 };
+            var requestBody = JsonConvert.SerializeObject(newProduct);
+            var request = new Mock<HttpRequest>();
+            request.Setup(r => r.Body).Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(requestBody)));
 
-        //    // Act
-        //    var response = await function.Run(request.Object, cart.Id);
+            // Act
+            var response = await function.Run(request.Object, cart.Id);
 
-        //    // Assert
-        //    var result = Assert.IsType<OkObjectResult>(response);
-        //    var updatedCart = Assert.IsType<CartEntity>(result.Value);
-        //    Assert.Equal(2, updatedCart.Products.Count);
-        //    Assert.Contains(updatedCart.Products, p => p.ProductName == "New Product" && p.Quantity == 2);
-        //}
+            // Assert
+            var result = Assert.IsType<OkObjectResult>(response);
+            var updatedCart = Assert.IsType<CartEntity>(result.Value);
+            Assert.Equal(2, updatedCart.Products.Count);
+            Assert.Contains(updatedCart.Products, p => p.ProductName == "New Product" && p.Quantity == 2);
+        }
 
         [Fact]
         public async Task AddProductToUserCart_ProductQuantityIncreased_ReturnsOkObjectResult()
@@ -129,33 +129,33 @@ namespace Test.CartTest
             Assert.Equal("Cart not found", result.Value);
         }
 
-        //[Fact]
-        //public async Task AddProductToUserCart_InvalidProduct_ReturnsBadRequestObjectResult()
-        //{
-        //    // Arrange
-        //    var context = CreateContext();
-        //    var function = new AddproductToUserCart(_mockLogger.Object, context);
+        [Fact]
+        public async Task AddProductToUserCart_InvalidProduct_ReturnsBadRequestObjectResult()
+        {
+            // Arrange
+            var context = CreateContext();
+            var function = new AddproductToUserCart(_mockLogger.Object, context);
 
-        //    var cart = new CartEntity
-        //    {
-        //        Id = Guid.NewGuid().ToString(),
-        //        PartitionKey = "Cart",
-        //        Cart = "Cart",
-        //        CreatedDate = DateTime.Now,
-        //        Products = new List<CartProductEntity>()
-        //    };
-        //    context.CartEntity.Add(cart);
-        //    await context.SaveChangesAsync();
+            var cart = new CartEntity
+            {
+                Id = Guid.NewGuid().ToString(),
+                PartitionKey = "Cart",
+                Cart = "Cart",
+                CreatedDate = DateTime.Now,
+                Products = new List<CartProductEntity>()
+            };
+            context.CartEntity.Add(cart);
+            await context.SaveChangesAsync();
 
-        //    var request = new Mock<HttpRequest>();
-        //    request.Setup(r => r.Body).Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(""))); // Empty request body
+            var request = new Mock<HttpRequest>();
+            request.Setup(r => r.Body).Returns(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(""))); // Empty request body
 
-        //    // Act
-        //    var response = await function.Run(request.Object, cart.Id);
+            // Act
+            var response = await function.Run(request.Object, cart.Id);
 
-        //    // Assert
-        //    var result = Assert.IsType<BadRequestObjectResult>(response);
-        //    Assert.Equal("Invalid product data", result.Value);
-        //}
+            // Assert
+            var result = Assert.IsType<BadRequestObjectResult>(response);
+            Assert.Equal("Invalid product data", result.Value);
+        }
     }
 }

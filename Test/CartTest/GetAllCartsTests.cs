@@ -25,7 +25,7 @@ namespace Test.CartTest
         {
             _mockLogger = new Mock<ILogger<GetAllCarts>>();
             _options = new DbContextOptionsBuilder<DataContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
             InitializeContext();
@@ -39,43 +39,43 @@ namespace Test.CartTest
             _function = new GetAllCarts(_mockLogger.Object, _context);
         }
 
-        //[Fact]
-        //public async Task Run_ReturnsNoContent_WhenNoCartsExist()
-        //{
-        //    // Arrange
-        //    InitializeContext();
-        //    var req = new Mock<HttpRequest>();
+        [Fact]
+        public async Task Run_ReturnsNoContent_WhenNoCartsExist()
+        {
+            // Arrange
+            InitializeContext();
+            var req = new Mock<HttpRequest>();
 
-        //    // Act
-        //    var result = await _function.Run(req.Object);
+            // Act
+            var result = await _function.Run(req.Object);
 
-        //    // Assert
-        //    Assert.IsType<NoContentResult>(result);
-        //}
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
 
-        //[Fact]
-        //public async Task Run_ReturnsOk_WithListOfCarts()
-        //{
-        //    // Arrange
-        //    InitializeContext();
-        //    var req = new Mock<HttpRequest>();
+        [Fact]
+        public async Task Run_ReturnsOk_WithListOfCarts()
+        {
+            // Arrange
+            InitializeContext();
+            var req = new Mock<HttpRequest>();
 
-        //    var carts = new List<CartEntity>
-        //    {
-        //        new CartEntity { Id = Guid.NewGuid().ToString() },
-        //        new CartEntity { Id = Guid.NewGuid().ToString() }
-        //    };
+            var carts = new List<CartEntity>
+            {
+                new CartEntity { Id = Guid.NewGuid().ToString() },
+                new CartEntity { Id = Guid.NewGuid().ToString() }
+            };
 
-        //    _context.CartEntity.AddRange(carts);
-        //    await _context.SaveChangesAsync();
+            _context.CartEntity.AddRange(carts);
+            await _context.SaveChangesAsync();
 
-        //    // Act
-        //    var result = await _function.Run(req.Object);
+            // Act
+            var result = await _function.Run(req.Object);
 
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var returnValue = Assert.IsType<List<CartEntity>>(okResult.Value);
-        //    Assert.Equal(2, returnValue.Count);
-        //}
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<List<CartEntity>>(okResult.Value);
+            Assert.Equal(2, returnValue.Count);
+        }
     }
 }

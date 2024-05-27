@@ -23,7 +23,7 @@ namespace Test.CartTest
         {
             _mockLogger = new Mock<ILogger<GetCustomerCart>>();
             _options = new DbContextOptionsBuilder<DataContext>()
-                .UseInMemoryDatabase(databaseName: "TestDatabase")
+                .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                 .Options;
 
             InitializeContext();
@@ -37,27 +37,27 @@ namespace Test.CartTest
             _function = new GetCustomerCart(_mockLogger.Object, _context);
         }
 
-        //[Fact]
-        //public async Task Run_ReturnsOk_WhenCartExists()
-        //{
-        //    LogDatabaseState("Before Add Cart");
-        //    // Arrange
-        //    InitializeContext();
-        //    var req = new Mock<HttpRequest>();
+        [Fact]
+        public async Task Run_ReturnsOk_WhenCartExists()
+        {
+            LogDatabaseState("Before Add Cart");
+            // Arrange
+            InitializeContext();
+            var req = new Mock<HttpRequest>();
 
-        //    var cart = new CartEntity { Id = Guid.NewGuid().ToString() };
-        //    _context.CartEntity.Add(cart);
-        //    await _context.SaveChangesAsync();
-        //    string cartId = cart.Id;
+            var cart = new CartEntity { Id = Guid.NewGuid().ToString() };
+            _context.CartEntity.Add(cart);
+            await _context.SaveChangesAsync();
+            string cartId = cart.Id;
 
-        //    // Act
-        //    var result = await _function.Run(req.Object, cartId);
-        //    LogDatabaseState("After Add Cart");
-        //    // Assert
-        //    var okResult = Assert.IsType<OkObjectResult>(result);
-        //    var returnValue = Assert.IsType<CartEntity>(okResult.Value);
-        //    Assert.Equal(cartId, returnValue.Id);
-        //}
+            // Act
+            var result = await _function.Run(req.Object, cartId);
+            LogDatabaseState("After Add Cart");
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<CartEntity>(okResult.Value);
+            Assert.Equal(cartId, returnValue.Id);
+        }
 
         [Fact]
         public async Task Run_ReturnsNoContent_WhenCartDoesNotExist()
