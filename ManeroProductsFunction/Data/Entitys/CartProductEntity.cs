@@ -9,5 +9,5 @@ public partial class CartProductEntity
     public string ProductName { get; set; } = null!;
     public int Quantity { get; set; } = 0!;
     public int Price { get; set; } = 0!;
-    public int DiscountPrice { get; set; } = 0!;
+    public int? DiscountPrice { get; set; } = 0!;
 }
